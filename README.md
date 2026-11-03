@@ -14,4 +14,4 @@ Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alte
 
 ## GitHub e servidor
 
-A compilação automática está em `.github/workflows/ci.yml`. O deploy SSH para `rpg@45.79.9.248` está preparado e permanece desativado até configurar credenciais e `RPG_DEPLOY_ENABLED=true` no GitHub. Leia [Configuração do servidor](docs/SERVIDOR.md). A publicação remota ainda depende dessa configuração e de validação no servidor.
+GitHub Actions publica a compilação na branch `web`; o servidor Ubuntu busca atualizações pelo cron a cada minuto, como no Shot. Acesso: `ssh -p 22122 nelson@45.79.9.248`. O RPG usa a porta 8002 e o Shot continua em 8001. Consulte [Configuração do servidor](docs/SERVIDOR.md) para instalação sem sudo e abertura do túnel SSH. Não são necessários secrets SSH no GitHub.

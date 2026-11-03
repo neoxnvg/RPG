@@ -1,52 +1,55 @@
-# Publicação automática: Codex → GitHub → servidor
+# Integração do RPG no mesmo modelo do Shot
 
-Destino informado: `rpg@45.79.9.248`. Porta 22 e diretório `/var/www/aether` são padrões propostos, ainda não confirmados. Ubuntu e acesso SSH foram confirmados pelo usuário. O servidor web existente ainda não foi inspecionado. O pipeline pressupõe servidor Linux com SSH, rsync e GNU coreutils.
+Acesso correto confirmado pelo fluxo existente: `ssh -p 22122 nelson@45.79.9.248`. As suposições anteriores `rpg` e porta `22` estavam erradas. O RPG usa agora **Codex → main → GitHub Actions → web → servidor**, sem conexão SSH do Codex ou do GitHub Actions ao servidor.
 
-O workflow compila cada envio e pull request. Em `main`, depois de uma compilação bem-sucedida, publica quando a variável `RPG_DEPLOY_ENABLED` for `true`. Codex realiza alterações quando recebe tarefas; o deploy acontece após o commit ser enviado ao GitHub. O pipeline não transforma Codex em um processo que cria alterações sozinho.
+O Shot permanece em 8001. O RPG usa **8002**, com diretórios, locks e entradas cron exclusivos. Python serve apenas em `127.0.0.1`; não é necessário Nginx, sudo, chave SSH nos secrets do GitHub ou abertura pública de 8002. Não execute as instruções antigas de Nginx/deploy SSH. Os antigos scripts foram removidos. Caso já tenham sido executados, seus efeitos no servidor não são removidos automaticamente por esta alteração.
 
-## Preparação no servidor
+## Instalação, dentro da sessão SSH
 
-Acesse o servidor com sua credencial existente. Confirme o sistema e a porta SSH. O usuário `rpg` precisa poder escrever em `/var/www/aether`. Crie essa pasta como `rpg` (`mkdir -p /var/www/aether/releases`). Instale `rsync` se necessário, usando o gerenciador do sistema. Não substitua configurações de sites existentes.
+Primeiro confirme que a porta 8002 não está sendo usada por outro aplicativo: `ss -ltn | grep ':8002'`. Se aparecer algum serviço desconhecido, pare e escolha outra porta antes da instalação.
 
-Configure o servidor web para servir `/var/www/aether/current`. Em Nginx, um novo virtual host pode usar `root /var/www/aether/current;` e `location / { try_files $uri $uri/ =404; }`. Isso é um exemplo, não uma configuração aplicada: o domínio, permissões de leitura/travessia e possíveis sites já existentes devem ser verificados antes. Confirme também se deseja HTTPS e qual domínio apontará para este IP.
+Depois da publicação inicial da branch `web`:
 
-## Credenciais do deploy
+```bash
+git clone --branch web --single-branch https://github.com/neoxnvg/RPG.git ~/rpg-web
+cd ~/rpg-web
+git fetch origin main
+git show FETCH_HEAD:scripts/install-server.sh > /tmp/install-rpg-server.sh
+bash /tmp/install-rpg-server.sh
+```
 
-Em uma máquina confiável, gere uma chave Ed25519 dedicada ao deploy. Adicione somente a chave **pública** a `~rpg/.ssh/authorized_keys` do servidor, com permissões 700 no diretório `.ssh` e 600 no arquivo. Use uma chave exclusiva para automação, sem reutilizar sua chave pessoal. Mantenha a privada fora do repositório e do chat.
+Se `~/rpg-web` já existir, não apague nem sobrescreva: confira o remote, a branch e possíveis alterações locais primeiro. Para reexecutar a instalação em um checkout correto e limpo, use as últimas três linhas a partir de `cd ~/rpg-web`. Repositórios privados exigem o acesso Git já configurado no servidor, como no Shot; não inclua tokens no endereço Git ou no chat.
 
-No repositório GitHub, abra Settings → Secrets and variables → Actions. Cadastre os secrets:
+Pré-requisitos: `git`, `python3`, `crontab`, `flock` e `timeout`, como no Shot. O instalador preserva as entradas cron do Shot e adiciona somente entradas com `# RPG-MANAGED`. Instala helpers em `~/.local/share/rpg`, valida Python e uma requisição HTTP, e inicia o servidor. Cron verifica atualizações a cada minuto e o inicia após reboot. Os helpers são atualizados quando o instalador é executado novamente.
 
-- `RPG_SSH_KEY`: chave privada dedicada correspondente à pública autorizada no servidor.
-- `RPG_SSH_KNOWN_HOSTS`: entrada de host SSH validada para `45.79.9.248` (ou `[45.79.9.248]:PORTA` para uma porta diferente de 22). Verifique a impressão digital com o console do provedor/administrador. A saída de `ssh-keyscan` sozinha não comprova a identidade do servidor.
+## Abrir o jogo no Windows
 
-Cadastre as variables, se os padrões forem diferentes:
+Em outra janela do Git Bash/PowerShell:
 
-- `RPG_DEPLOY_HOST`: `45.79.9.248`.
-- `RPG_DEPLOY_USER`: `rpg`.
-- `RPG_DEPLOY_PORT`: `22`.
-- `RPG_DEPLOY_PATH`: `/var/www/aether` (diretório exclusivo deste jogo, sem barra final).
+```bash
+ssh -p 22122 -N -o ExitOnForwardFailure=yes -L 8002:127.0.0.1:8002 nelson@45.79.9.248
+```
 
-Depois de preparar as credenciais, o diretório e o site, adicione `RPG_DEPLOY_ENABLED` com valor `true`. Execute o workflow em Actions → Validar e compilar RPG → Run workflow, selecionando `main`. Publicações seguintes acontecem em cada push para `main`. Restrições do environment `production`, se configuradas no GitHub, também se aplicam.
+Mantenha essa janela aberta e acesse **http://localhost:8002**. O túnel do Shot em 8001 pode continuar aberto em paralelo.
 
-## Validação e recuperação
+## Como as mudanças chegam ao servidor
 
-O deploy envia `dist/` para `releases/<commit>` e só depois troca o link `current`. Versões anteriores permanecem para recuperação. A atualização do link pressupõe que `current` seja um link simbólico ou ainda não exista: não substitua uma pasta de site existente por esse fluxo.
+1. Codex altera e valida o código; as mudanças precisam ser commitadas e enviadas para `main`.
+2. `.github/workflows/publish-web.yml` instala pelo lockfile, compila e publica `dist/` em `web`. A configuração Actions precisa permitir que o workflow grave conteúdo no repositório. Não há secrets SSH.
+3. O cron executa `refresh-server.sh` uma vez por minuto, busca `web` e atualiza apenas por fast-forward e se a cópia local estiver limpa. Uma falha de rede preserva a versão instalada.
+4. O servidor estático lê os arquivos atualizados. Atualize a página no navegador após a execução Actions e o próximo minuto do cron.
 
-Verifique a execução no GitHub Actions e faça uma requisição ao endereço público do jogo e a `models/RobotExpressive.glb`. Abra o jogo no navegador para confirmar os controles e o personagem. A transferência SSH não comprova que DNS, firewall, HTTPS ou servidor web estejam corretos.
+A publicação da árvore estática segue o mesmo modelo do Shot; não há troca atômica de todos os arquivos durante o fast-forward. Recarregue a página caso coincida com o instante da atualização.
 
-Para voltar uma versão, um administrador pode repontar `current` para uma das pastas já presentes em `releases/`, após confirmar o commit desejado. Não há limpeza automática dessas versões.
+## Diagnóstico
 
-## Estado atual
+No servidor:
 
-Código e automação preparados. Acesso SSH, fingerprint do servidor, instalação remota, servidor web e publicação pública **ainda não foram validados**. Este ambiente Codex não possui chave SSH nem rota TCP liberada para o servidor. O deploy via GitHub Actions usa seus próprios runners e os secrets cadastrados no GitHub.
+```bash
+crontab -l
+tail -n 40 ~/.local/share/rpg/cron.log
+tail -n 40 ~/.local/share/rpg/server.log
+curl -I http://127.0.0.1:8002/
+```
 
-
-## Configuração assistida no Ubuntu
-
-No servidor, como `rpg`, use uma cópia atual deste repositório e execute `bash scripts/setup-ubuntu.sh`. É necessário sudo. O script instala Nginx/rsync/GitHub CLI, prepara `/var/www/aether` e um site separado na porta 8080. Se essa porta já estiver ocupada ou o arquivo de configuração existente for diferente, ele interrompe em vez de substituir o serviço. Ele não substitui o site padrão. Sem domínio informado, este acesso inicial usa HTTP pelo IP; HTTPS deve ser configurado quando um domínio estiver disponível.
-
-O script cria uma chave dedicada em `~/.ssh/aether_actions`, autoriza sua pública e grava a chave pública de host obtida do próprio servidor. A chave privada não é exibida. Não envie esses arquivos pelo chat. Se existir firewall do provedor, libere entrada TCP 8080. Se UFW estiver ativo, o script adiciona somente a regra da porta 8080.
-
-Autentique sua conta administradora com `gh auth login --hostname github.com --git-protocol https --web --scopes repo,workflow` e execute `bash scripts/connect-github.sh` dentro da sessão SSH. O segundo script cadastra os secrets diretamente pela CLI, detecta a porta SSH da sessão, configura as variáveis e solicita o primeiro deploy. A execução precisa conseguir administrar os secrets/variáveis/Actions do repositório. Chaves e autenticação são necessárias no servidor, não neste chat.
-
-Os scripts tiveram sintaxe validada, mas não foram executados no servidor de produção por este ambiente. Antes de afirmar que o site está publicado, confirme a execução no Actions e a resposta pública de `http://45.79.9.248:8080` e de `/models/RobotExpressive.glb`.
+O servidor usa um lock de processo para não iniciar instâncias duplicadas. As verificações locais deste ambiente não comprovam que o cron remoto esteja instalado: o usuário precisa executar o instalador e confirmar `RPG OK` no SSH. Depois, valide pelo túnel. O Codex não recebeu senha ou chave privada do servidor.
