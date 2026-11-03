@@ -14,4 +14,14 @@ Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alte
 
 ## GitHub e servidor
 
-GitHub Actions publica a compilação na branch `web`; o servidor Ubuntu busca atualizações pelo cron a cada minuto, como no Shot. Acesso: `ssh -p 22122 nelson@45.79.9.248`. O RPG usa a porta 8002 e o Shot continua em 8001. Consulte [Configuração do servidor](docs/SERVIDOR.md) para instalação sem sudo e abertura do túnel SSH. Não são necessários secrets SSH no GitHub.
+GitHub Actions publica a compilação na branch `web`; o servidor Ubuntu busca atualizações pelo cron a cada minuto, como no Shot. Acesso: `ssh -p 22122 rpg@45.79.9.248`. O RPG usa a porta 8002 e o Shot continua em 8001. Consulte [Configuração do servidor](docs/SERVIDOR.md) para instalação sem sudo e abertura do túnel SSH. Não são necessários secrets SSH no GitHub.
+
+## Cidade principal — Vespera
+
+Cidade 3D procedural inspirada na referência fornecida: muralhas, portão, catedral, guilda, arquivo dos magos, mercado, estalagem, forja, jardins, praça e portal. A arquitetura é gerada em `src/city.js`, com texturas de pedra e telhas criadas localmente; não exige arquivos externos de cenário. Os prédios ainda não têm interiores acessíveis.
+
+Os primeiros NPCs são Capitã Lyra (missão inicial), Mira (mercadora/provisões de teste), Brann (ferreiro/diálogo), Irmã Elara (cura) e Mestre Oren (instruções de combate). Clique no nome do NPC para se aproximar e conversar; E interage com o NPC mais próximo. O comércio e a fabricação ainda não possuem sistemas de inventário ou economia. O Oráculo permanece próximo à catedral.
+
+A cidade é uma zona segura. Bonecos no pátio de treino recebem ataques do botão direito e se restauram após cinco segundos. Clique para caminhar; a navegação contorna os prédios. `M` ou o botão CIDADE mostra a vista geral; `R` retorna a câmera ao personagem. A rotação e o zoom continuam disponíveis.
+
+`npm test` verifica a navegação, incluindo contorno de obstáculos e rejeição de interiores. A compilação e os testes de navegador também foram executados durante a implementação. As atualizações seguem o fluxo GitHub → branch web → cron do servidor. O usuário de acesso é `rpg`, na porta `22122`.

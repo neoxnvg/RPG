@@ -18,6 +18,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - run: npm test
       - run: npm run build
       - run: python3 scripts/export-html.py
       - name: Publish compiled files to web branch

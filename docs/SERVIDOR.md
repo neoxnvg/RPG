@@ -1,6 +1,6 @@
 # Integração do RPG no mesmo modelo do Shot
 
-Acesso correto confirmado pelo fluxo existente: `ssh -p 22122 nelson@45.79.9.248`. As suposições anteriores `rpg` e porta `22` estavam erradas. O RPG usa agora **Codex → main → GitHub Actions → web → servidor**, sem conexão SSH do Codex ou do GitHub Actions ao servidor.
+Acesso correto confirmado pelo fluxo existente: `ssh -p 22122 rpg@45.79.9.248`. As suposições anteriores `rpg` e porta `22` estavam erradas. O RPG usa agora **Codex → main → GitHub Actions → web → servidor**, sem conexão SSH do Codex ou do GitHub Actions ao servidor.
 
 O Shot permanece em 8001. O RPG usa **8002**, com diretórios, locks e entradas cron exclusivos. Python serve apenas em `127.0.0.1`; não é necessário Nginx, sudo, chave SSH nos secrets do GitHub ou abertura pública de 8002. Não execute as instruções antigas de Nginx/deploy SSH. Os antigos scripts foram removidos. Caso já tenham sido executados, seus efeitos no servidor não são removidos automaticamente por esta alteração.
 
@@ -27,7 +27,7 @@ Pré-requisitos: `git`, `python3`, `crontab`, `flock` e `timeout`, como no Shot.
 Em outra janela do Git Bash/PowerShell:
 
 ```bash
-ssh -p 22122 -N -o ExitOnForwardFailure=yes -L 8002:127.0.0.1:8002 nelson@45.79.9.248
+ssh -p 22122 -N -o ExitOnForwardFailure=yes -L 8002:127.0.0.1:8002 rpg@45.79.9.248
 ```
 
 Mantenha essa janela aberta e acesse **http://localhost:8002**. O túnel do Shot em 8001 pode continuar aberto em paralelo.
