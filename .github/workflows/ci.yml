@@ -43,7 +43,7 @@ jobs:
           DEPLOY_HOST: ${{ vars.RPG_DEPLOY_HOST || '45.79.9.248' }}
           DEPLOY_USER: ${{ vars.RPG_DEPLOY_USER || 'rpg' }}
           DEPLOY_PORT: ${{ vars.RPG_DEPLOY_PORT || '22' }}
-          DEPLOY_PATH: ${{ vars.RPG_DEPLOY_PATH || '/home/rpg/apps/aether' }}
+          DEPLOY_PATH: ${{ vars.RPG_DEPLOY_PATH || '/var/www/aether' }}
           DEPLOY_SHA: ${{ github.sha }}
           SSH_PRIVATE_KEY: ${{ secrets.RPG_SSH_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.RPG_SSH_KNOWN_HOSTS }}
