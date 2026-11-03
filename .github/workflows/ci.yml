@@ -22,3 +22,42 @@ jobs:
           name: aether-site
           path: dist
           if-no-files-found: error
+  deploy:
+    name: Publicar no servidor
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.RPG_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: rpg-production
+      cancel-in-progress: false
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: aether-site
+          path: dist
+      - name: Preparar acesso e publicar
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ vars.RPG_DEPLOY_HOST || '45.79.9.248' }}
+          DEPLOY_USER: ${{ vars.RPG_DEPLOY_USER || 'rpg' }}
+          DEPLOY_PORT: ${{ vars.RPG_DEPLOY_PORT || '22' }}
+          DEPLOY_PATH: ${{ vars.RPG_DEPLOY_PATH || '/home/rpg/apps/aether' }}
+          DEPLOY_SHA: ${{ github.sha }}
+          SSH_PRIVATE_KEY: ${{ secrets.RPG_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.RPG_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY" || { echo 'Configure RPG_SSH_KEY in GitHub Actions secrets'; exit 1; }
+          test -n "$SSH_KNOWN_HOSTS" || { echo 'Configure RPG_SSH_KNOWN_HOSTS in GitHub Actions secrets'; exit 1; }
+          key_dir=$(mktemp -d)
+          trap 'rm -rf "$key_dir"' EXIT
+          chmod 700 "$key_dir"
+          export DEPLOY_KEY_FILE="$key_dir/key"
+          export DEPLOY_KNOWN_HOSTS_FILE="$key_dir/known_hosts"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$DEPLOY_KEY_FILE"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$DEPLOY_KNOWN_HOSTS_FILE"
+          chmod 600 "$DEPLOY_KEY_FILE" "$DEPLOY_KNOWN_HOSTS_FILE"
+          unset SSH_PRIVATE_KEY SSH_KNOWN_HOSTS
+          bash scripts/deploy.sh

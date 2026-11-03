@@ -11,3 +11,7 @@ Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alte
 ## Modelo importado
 
 `public/models/RobotExpressive.glb`: Robot Expressive, por Quaternius (CC0), distribuído nos exemplos oficiais do Three.js: https://github.com/mrdoob/three.js/tree/dev/examples/models/gltf/RobotExpressive . O personagem tem animações de caminhada, corrida, repouso e ataque. O cenário é geometria 3D criada no projeto. Se o arquivo não estiver disponível, um personagem geométrico local permite continuar a jogar. Esta é uma primeira versão, sem a promessa de qualidade AAA ou de um jogo completo.
+
+## GitHub e servidor
+
+A compilação automática está em `.github/workflows/ci.yml`. O deploy SSH para `rpg@45.79.9.248` está preparado e permanece desativado até configurar credenciais e `RPG_DEPLOY_ENABLED=true` no GitHub. Leia [Configuração do servidor](docs/SERVIDOR.md). A publicação remota ainda depende dessa configuração e de validação no servidor.
