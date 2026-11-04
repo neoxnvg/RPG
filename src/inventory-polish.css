@@ -1,0 +1,91 @@
+/* Inventory details are scoped so the world HUD and character panel retain their layout. */
+#inventory-panel{display:flex;flex-direction:column;overflow:hidden;bottom:145px;width:366px;padding:15px 16px 11px;background:linear-gradient(135deg,#20242a 0,#13181f 40%,#10151b 100%);border-color:#947d4f;box-shadow:0 12px 50px #000b,inset 0 0 0 3px #090d1299,inset 0 0 38px #0003;scrollbar-gutter:stable;scrollbar-color:#75623e #10151b}
+#inventory-panel:after{content:'';position:absolute;inset:5px;border:1px solid #d1ae5720;pointer-events:none}
+#inventory-panel .inventory-scroll-area{min-height:0;flex:1 1 auto;overflow:auto;padding-right:4px;margin-right:-4px;scrollbar-width:thin;scrollbar-color:#75623e #10151b}
+#inventory-panel .panel-title{position:relative;top:auto;flex:0 0 auto;margin-bottom:10px;padding:7px 0 11px;background:#191e25;box-shadow:0 5px 12px #14181f;z-index:6}
+#inventory-panel .panel-title small{font:7px Arial,sans-serif;letter-spacing:1.8px;color:#9f8b65}
+#inventory-panel .panel-title h2{font:23px Georgia,serif;color:#e1d0aa;letter-spacing:.3px;margin-top:5px}
+#inventory-panel .close-button{width:27px;height:27px;border:1px solid #76644655;background:#0c111966;color:#c3ae87;margin-top:3px;padding:0;display:grid;place-items:center}
+#inventory-panel .close-button:hover{border-color:#d3b57d;color:#fff0cb;background:#41331f}
+#inventory-stats{display:grid;grid-template-columns:repeat(3,1fr);padding:0;border:1px solid #79633d55;background:#0b1016;box-shadow:inset 0 1px 6px #0005}
+#inventory-stats .inventory-stat{padding:8px 10px;text-align:center;border-right:1px solid #806a3e2e}
+#inventory-stats .inventory-stat:last-child{border-right:0}
+#inventory-stats .inventory-stat>span{display:block;font:9px Arial,sans-serif;color:#a6a6a1;letter-spacing:.3px}
+#inventory-stats .inventory-stat>b{display:block;margin:4px 0 0;font:17px Georgia,serif;color:#e4d2a7;text-shadow:0 2px 3px #000}
+#inventory-panel .paperdoll{height:179px;margin-top:10px;border:1px solid #7a68483b;background:radial-gradient(ellipse at 50% 45%,#54482c20,transparent 65%),linear-gradient(100deg,#0a1017,#1b222a 50%,#0b1118);box-shadow:inset 0 0 20px #0004}
+#inventory-panel .paperdoll-sigil{inset:45px 55px 15px;display:grid;place-items:center;color:#b8995444;font-size:95px;text-shadow:0 0 25px #c09d3422}
+#inventory-panel #equipment-slots{position:relative;display:grid;grid-template-columns:65px 1fr 65px;grid-template-rows:15px repeat(3,43px);column-gap:22px;row-gap:6px;padding:7px 21px 8px;height:100%;width:100%}
+#inventory-panel .equipment-heading{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;font:7px Arial,sans-serif;letter-spacing:1.4px;color:#9d906f;padding-bottom:4px;border-bottom:1px solid #9f885129}
+#inventory-panel .equipment-heading>small{font:7px Arial,sans-serif;letter-spacing:.5px;color:#6f7a83}
+#inventory-panel .gear-slot{position:relative;inset:auto;width:auto;height:auto;text-align:center;border:1px solid #74614466;background:#090e158c;box-shadow:inset 0 0 9px #0008}
+#inventory-panel .gear-slot>small{position:absolute;top:0;left:0;right:0;transform:none;z-index:3;font:7px/12px Arial,sans-serif;color:#aa9b7e;letter-spacing:.6px;text-transform:uppercase;pointer-events:none;background:linear-gradient(90deg,transparent,#090e15b3,transparent)}
+#inventory-panel .gear-slot .item-icon{inset:0;min-height:0;min-width:0;padding:11px 3px 2px;border:0;border-radius:0;box-shadow:inset 0 0 0 1px #be9b5417}
+#inventory-panel .gear-slot .item-icon svg{object-fit:contain;max-height:100%;filter:drop-shadow(0 3px 3px #000c)}
+#inventory-panel .slot-helm{grid-column:2;grid-row:2;width:58px;justify-self:center}
+#inventory-panel .slot-armor{grid-column:2;grid-row:3/5;width:68px;justify-self:center}
+#inventory-panel .slot-weapon{grid-column:1;grid-row:3/5}
+#inventory-panel .slot-wings{grid-column:3;grid-row:2/4}
+#inventory-panel .slot-boots{grid-column:3;grid-row:4}
+#inventory-panel .slot-ring{grid-column:1;grid-row:2}
+#inventory-panel .empty-slot{height:100%;width:100%;padding:14px 6px 4px;opacity:.13}
+#inventory-panel .bag-heading{margin:11px 0 7px;font:8px Arial,sans-serif;letter-spacing:1px;color:#c0ad84}
+#inventory-panel .bag-heading>span{display:flex;align-items:center;gap:8px}
+#inventory-panel .bag-heading>span>small{font:8px Arial,sans-serif;letter-spacing:0;color:#87929a;margin:0;text-transform:none}
+#inventory-gold{font:13px Georgia,serif;color:#e2bc70;white-space:nowrap;letter-spacing:0}
+#inventory-gold .zen-symbol{font-size:14px;color:#ca9e4d}
+#inventory-gold>small{font:7px Arial,sans-serif;letter-spacing:.6px;margin-left:2px;color:#b5975b}
+#inventory-panel #bag-grid{position:relative;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(6,33px);gap:0;padding:3px;border:1px solid #9d81508a;box-shadow:inset 0 0 0 2px #090c11,0 3px 8px #0004;background:#070c12}
+#inventory-panel .bag-cell{background:linear-gradient(135deg,#1f28343d,#10161f38);border:1px solid #5e5b4a42;box-shadow:inset 0 0 3px #0004}
+#inventory-panel .item-icon{padding:3px;background:radial-gradient(ellipse at 50% 42%,#6d78822e,#141b25 90%);border:1px solid #8e8a7366;transition:border-color .12s,box-shadow .12s;isolation:isolate}
+#inventory-panel .item-icon svg{display:block;min-width:0;min-height:0;width:100%;height:100%;max-width:100%;max-height:100%;filter:drop-shadow(0 3px 2px #000b);overflow:visible;pointer-events:none}
+#inventory-panel .item-icon.rare{border-color:#6488a391;background:radial-gradient(ellipse at 50% 35%,#30557366,#101b29 90%)}
+#inventory-panel .item-icon.epic{border-color:#9e76ba99;background:radial-gradient(ellipse at 50% 35%,#61427a66,#191324 90%)}
+#inventory-panel .item-icon.legendary{border-color:#ba9855b0;background:radial-gradient(ellipse at 50% 35%,#89642b66,#211b15 90%)}
+#inventory-panel .item-icon:hover{border-color:#ead4a1;box-shadow:inset 0 0 0 1px #e7c77a55,inset 0 0 18px #c5a76722;z-index:3}
+#inventory-panel .item-icon:focus-visible{outline:2px solid #d5c39a;outline-offset:-2px;z-index:4}
+#inventory-panel .item-selected{outline:1px solid #f0d28c;outline-offset:-2px;box-shadow:inset 0 0 0 2px #080b0f,inset 0 0 24px #d9b46344,0 0 5px #caa65c33;z-index:2}
+#inventory-panel .item-selected:after{content:'';position:absolute;inset:4px;border:1px solid #efd69a33;pointer-events:none}
+#inventory-panel .item-level{top:3px;right:4px;font:bold 9px Arial,sans-serif;color:#f2ce7c;text-shadow:0 1px 2px #000,0 0 3px #000}
+#inventory-panel .item-count{right:4px;bottom:3px;font:bold 10px Arial,sans-serif;color:#f4e6c7;text-shadow:0 1px 2px #000,0 0 3px #000}
+#inventory-panel .drop-valid{background:#476b3f80!important;border-color:#add191!important;box-shadow:inset 0 0 0 1px #add19177!important}
+#inventory-panel .drop-invalid{background:#79393680!important;border-color:#d97f6a!important;box-shadow:inset 0 0 0 1px #d97f6a66!important}
+#inventory-panel #item-details{position:relative;bottom:auto;flex:0 0 auto;z-index:5;min-height:110px;margin:11px -2px 0;padding:11px 2px 9px;background:linear-gradient(#171d25,#11171e);border-top:1px solid #aa8a4a77;box-shadow:0 -6px 15px #10161e66}
+#inventory-panel .item-empty{padding:11px 7px 18px;gap:12px;min-height:100px}
+#inventory-panel .item-empty>span{color:#9b8454;font-size:30px}
+#inventory-panel .item-empty strong{font:13px Georgia,serif;color:#d1c1a0}
+#inventory-panel .item-empty p{margin:5px 0 0;font:9px/1.5 Arial,sans-serif;color:#8c9aa5}
+#inventory-panel .item-description{align-items:flex-start;gap:10px;min-height:65px}
+#inventory-panel .detail-icon{width:50px;height:60px;padding:5px;display:grid;place-items:center;border:1px solid #977e4b66;box-shadow:inset 0 0 10px #0004}
+#inventory-panel .detail-icon svg{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 3px 2px #0008)}
+#inventory-panel .item-identity{flex:1;min-width:0;padding-top:1px}
+#inventory-panel .item-category{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:10px}
+#inventory-panel .item-category>small{font:8px Arial,sans-serif;letter-spacing:.35px;color:#a6a49a}
+#inventory-panel .item-category .rarity-rare{color:#8cbbde}
+#inventory-panel .item-category .rarity-epic{color:#c1a0e3}
+#inventory-panel .item-category .rarity-legendary{color:#e9c67b}
+#inventory-panel .equipped-badge{font:6px Arial,sans-serif;letter-spacing:.6px;padding:2px 4px;border:1px solid #71876b55;color:#a9c39a;background:#37523122;white-space:nowrap}
+#inventory-panel .item-description h3{font:15px/1.25 Georgia,serif;color:#ebd6a9;margin:5px 0 7px;text-shadow:0 2px 3px #0005;overflow-wrap:break-word}
+#inventory-panel .item-affixes{display:flex;flex-wrap:wrap;gap:5px 11px;margin:0;font:9px Arial,sans-serif}
+#inventory-panel .item-affixes>div{display:flex;align-items:center;gap:4px}
+#inventory-panel .item-affixes dt{color:#9eabb3}
+#inventory-panel .item-affixes dd{margin:0;color:#e1c88f;font-weight:bold}
+#inventory-panel .item-comparison{display:flex;flex-wrap:wrap;gap:5px 9px;margin-top:6px;line-height:1}
+#inventory-panel .item-comparison:empty{display:none}
+#inventory-panel .item-compare{font:8px Arial,sans-serif;color:#8ebc89}
+#inventory-panel .item-compare.is-worse{color:#d28c77}
+#inventory-panel .material-description{font:9px/1.5 Arial,sans-serif;color:#9ca7b0}
+#inventory-panel .item-actions{display:block;margin-top:9px}
+#inventory-panel .item-primary-action{display:flex;align-items:center;justify-content:space-between;gap:9px;width:100%;min-height:33px;padding:8px 12px;font:12px Georgia,serif;letter-spacing:.3px;color:#f5e1b3;border:1px solid #b79553b3;background:linear-gradient(#6b5633,#352d22);box-shadow:inset 0 1px #f2d49226,0 2px 5px #0004}
+#inventory-panel .item-primary-action:hover{color:#fff0c7;border-color:#dfbc76;background:linear-gradient(#846a3e,#443723)}
+#inventory-panel .item-primary-action>span:last-child{font:15px Georgia,serif;color:#d8ba79}
+#inventory-panel .inventory-secondary-actions{display:flex;gap:7px;margin-top:7px}
+#inventory-panel .inventory-secondary-actions:empty{display:none}
+#inventory-panel .inventory-secondary-actions>button{display:flex;flex:1;align-items:center;justify-content:space-between;gap:6px;padding:6px 7px;min-height:27px;border:1px solid #7a6a4a44;background:#0d131b;color:#b6af9e;font:9px Arial,sans-serif;text-align:left}
+#inventory-panel .inventory-secondary-actions>button>small{font:8px Arial,sans-serif;color:#a78e5a;text-align:right}
+#inventory-panel .inventory-secondary-actions>button:hover:not(:disabled){border-color:#b49a65;color:#ebd3a1;background:#24231f}
+#inventory-panel .inventory-secondary-actions>button:disabled{opacity:.5}
+#inventory-panel .item-material-tip{margin:0 0 4px;color:#a6adb2;font:9px/1.5 Arial,sans-serif}
+#inventory-panel .panel-note{flex:0 0 auto;position:relative;z-index:5;font:8px/1.5 Arial,sans-serif;text-align:center;color:#78858d;margin-top:7px;padding-top:7px;border-top:1px solid #77633e33}
+#inventory-panel .panel-note>span{color:#a28a55;padding:0 4px}
+@media(max-height:800px){#inventory-panel .paperdoll{height:156px}#inventory-panel #equipment-slots{grid-template-rows:13px repeat(3,36px);padding-top:6px;row-gap:5px}#inventory-panel #bag-grid{grid-template-rows:repeat(6,29px)}#inventory-panel .inventory-stat{padding-block:6px}#inventory-panel #item-details{padding-top:9px;margin-top:9px}#inventory-panel .item-description{min-height:56px}#inventory-panel .detail-icon{height:54px;width:44px}#inventory-panel .item-description h3{font-size:14px;margin-block:4px 6px}}
+@media(max-width:760px){#inventory-panel{bottom:145px;width:342px;max-width:calc(100vw - 20px);padding:12px 13px 9px}#inventory-panel .panel-title{top:auto}#inventory-panel #equipment-slots{column-gap:18px;padding-inline:16px}#inventory-panel #bag-grid{grid-template-rows:repeat(6,30px)}#inventory-panel #item-details{bottom:auto}#inventory-panel .bag-heading>span{gap:5px}#inventory-panel .bag-heading>span>small{font-size:7px}#inventory-panel .inventory-secondary-actions{gap:5px}#inventory-panel .inventory-secondary-actions>button{padding-inline:6px;font-size:8px}#inventory-panel .inventory-secondary-actions>button>small{font-size:7px}}
