@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import {createSpellSystem} from '../src/spells.js';
+function fixture(){const scene=new THREE.Scene(),player=new THREE.Group(),enemy={hp:30,g:new THREE.Group()};enemy.g.position.set(5,0,0);scene.add(player,enemy.g);const spells=createSpellSystem({scene,player,enemies:[enemy],onDamage:(e,n)=>e.hp=Math.max(0,e.hp-n),toast:()=>{}});return {scene,player,enemy,spells};}
+test('meteor consumes mana, damages a nearby target and enforces cooldown',()=>{const {enemy,spells}=fixture();assert.equal(spells.cast('meteor'),true);assert.equal(enemy.hp,5);assert.equal(spells.state.mana,60);assert.ok(spells.state.effects>0);assert.equal(spells.cast('meteor'),false);assert.equal(enemy.hp,5);assert.equal(spells.state.mana,60);spells.update(8);assert.equal(spells.state.cooldowns.meteor,0);assert.equal(spells.state.mana,100);assert.equal(spells.state.effects,0);});
+test('nova respects its radius; targeted spells reject an out-of-range enemy',()=>{const {enemy,spells}=fixture();enemy.g.position.x=40;assert.equal(spells.cast('storm'),false);assert.equal(spells.state.mana,100);assert.equal(spells.cast('nova'),true);assert.equal(enemy.hp,30);enemy.g.position.x=6;spells.update(5);assert.equal(spells.cast('nova'),true);assert.equal(enemy.hp,12);});
+test('paused update leaves mana and cooldown unchanged while effects expire',()=>{const {spells}=fixture();spells.cast('storm');spells.update(2,false);assert.equal(spells.state.mana,65);assert.equal(spells.state.cooldowns.storm,7);assert.equal(spells.state.effects,0);});

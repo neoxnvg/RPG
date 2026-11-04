@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createHero } from './character.js';
 import { createNavigation } from './navigation.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -79,7 +80,7 @@ export function createCity(scene) {
   for(const x of [17,35])box(.2,.6,9,wood,x,.3,35);for(const z of [30.5,39.5])box(18,.6,.2,wood,26,.3,z);
   const npcData=[['Capitã Lyra','Guarda da cidade',-6,35,'#66778d'],['Mira','Mercadora',20,2,'#a16d52'],['Brann','Ferreiro',20,28,'#81564a'],['Irmã Elara','Curandeira',-7,-20,'#d3d4c1'],['Mestre Oren','Instrutor',17,34,'#7e806b']];
   function humanoid(x,z,color){const g=new THREE.Group();g.position.set(x,0,z);root.add(g);const cloth=material(color);put(new THREE.CylinderGeometry(.3,.5,1.05,8),cloth,0,.9,0,g);put(new THREE.SphereGeometry(.23,10,8),material('#c29c82'),0,1.68,0,g);put(new THREE.SphereGeometry(.25,10,8,0,Math.PI*2,0,Math.PI/2),wood,0,1.77,0,g);for(const a of [-1,1]){box(.18,.55,.22,wood,a*.2,.28,0,g);box(.16,.72,.17,cloth,a*.4,1.05,0,g);}return g;}
-  for(const [name,role,x,z,color] of npcData){const g=humanoid(x,z,color);const marker=put(new THREE.OctahedronGeometry(.16),gold,0,2.3,0,g);npcs.push({name,role,g,marker});}
+  for(const [name,role,x,z,color] of npcData){let g;if(name==='Capitã Lyra'||name==='Mestre Oren'){const guard=createHero(name==='Capitã Lyra'?'seraph':'phoenix',{wings:false});g=guard.root;g.scale.setScalar(.6);g.position.set(x,0,z);root.add(g);}else g=humanoid(x,z,color);const marker=put(new THREE.OctahedronGeometry(.16),gold,0,2.3,0,g);npcs.push({name,role,g,marker});}
   // Bake static architecture by material: detail without thousands of draw calls.
   root.updateMatrixWorld(true);
   const excluded=new Set([ground,pavement,plaza,portal,...npcs.map(n=>n.g),...animated.map(a=>a.object)]),batches=new Map();

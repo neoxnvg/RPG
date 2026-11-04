@@ -8,9 +8,15 @@ Node.js 22.12+ (validado com 24). `npm ci` e `npm run dev`. `npm run build` gera
 
 Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alternativo; Shift: correr; arrastar cenário: girar câmera horizontal/vertical; rolar roda: zoom; arrastar com botão do meio: deslocar câmera; R: recentralizar; botão direito no inimigo: ataque direcionado de energia (alcance de 35 unidades), com impacto e número de dano; Espaço: ataque; Q: cura (15s de recarga); E: interação; Esc: pausa. Em dispositivos móveis, toque no cenário para caminhar; use os botões de ação. Fale com o Oráculo, reúna cinco cristais e interaja com o portal. Cristais e conclusão são salvos em localStorage. Limpe `aether-save` para recomeçar.
 
-## Modelo importado
+## Personagens e magias
 
-`public/models/RobotExpressive.glb`: Robot Expressive, por Quaternius (CC0), distribuído nos exemplos oficiais do Three.js: https://github.com/mrdoob/three.js/tree/dev/examples/models/gltf/RobotExpressive . O personagem tem animações de caminhada, corrida, repouso e ataque. O cenário é geometria 3D criada no projeto. Se o arquivo não estiver disponível, um personagem geométrico local permite continuar a jogar. Esta é uma primeira versão, sem a promessa de qualidade AAA ou de um jogo completo.
+O jogador usa personagens 3D originais gerados em `src/character.js`, com armadura em camadas, elmo, ombreiras, manoplas, grevas, arma e quatro asas articuladas com penas geométricas e veios luminosos. H ou o botão HERÓI abre a inspeção e permite escolher Arconte da Aurora, Feiticeiro do Eclipse ou Cavaleiro da Fênix. A escolha é salva localmente. Caminhada, ataque e asas são animados proceduralmente. São versões iniciais para teste, sem sistema de raridade aleatória ou progressão de evolução implementado.
+
+Asas de evolução IV são aparências equipadas para testar. As três opções compartilham os atributos de combate atuais. Não há inventário de equipamentos ainda.
+
+Magias: **1 Nova Celestial** (25 mana, 5s, 18 dano em raio de 12); **2 Queda da Fênix** (40 mana, 8s, 25 dano em raio de 5 no alvo próximo); **3 Corrente Arcana** (35 mana, 7s, 20 dano em até três alvos próximos). Alcance de seleção de alvo: 35 unidades. Mana regenera 6 por segundo. Q restaura vida e agora tem efeito visual próprio. Botão direito continua atacando o boneco selecionado. Os NPCs da cidade não podem ser atacados.
+
+O robô RobotExpressive foi retirado do personagem ativo. O arquivo CC0 de Quaternius permanece em `public/models/` por compatibilidade com as verificações do instalador existente; seus créditos estão no mesmo diretório.
 
 ## GitHub e servidor
 
