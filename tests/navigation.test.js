@@ -18,3 +18,4 @@ test('open roads use a direct route',()=>{
  const nav=createNavigation([]);const end={x:0,z:-20};
  assert.deepEqual(nav.path({x:0,z:35},end),[end]);
 });
+test('NPC approach finds an accessible side instead of a point inside the forge',()=>{const nav=createNavigation([{x:25,z:21,w:14,d:10}]);const start={x:20,z:2},npc={x:20,z:28},point=nav.approach(start,npc);assert.ok(point);assert.equal(nav.blocked(point.x,point.z),false);assert.ok(nav.path(start,point));assert.ok(Math.hypot(point.x-npc.x,point.z-npc.z)<3);});

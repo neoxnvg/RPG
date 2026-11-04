@@ -6,8 +6,8 @@ export function createSpellSystem({scene,player,enemies,onDamage,toast}){
  function ring(position,color,radius=1,life=.8){const object=mesh(new THREE.TorusGeometry(radius,.045,6,64),color,position,life,{grow:5});object.rotation.x=Math.PI/2;return object;}
  function burst(position,color,n=24){for(let i=0;i<n;i++){const angle=i/n*Math.PI*2,speed=2+Math.random()*5;mesh(new THREE.OctahedronGeometry(.08),color,position,.7+Math.random()*.4,{velocity:new THREE.Vector3(Math.cos(angle)*speed,1+Math.random()*5,Math.sin(angle)*speed)});}}
  function beam(a,b,color){const delta=b.clone().sub(a),object=mesh(new THREE.CylinderGeometry(.08,.12,delta.length(),8),color,a.clone().add(b).multiplyScalar(.5),.45);object.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());}
- function cast(id){const spell=SPELLS[id];if(!spell)return false;if(cooldowns[id]>0){toast(`${spell.name}: ${Math.ceil(cooldowns[id])}s de recarga`);return false;}if(mana<spell.cost){toast('Mana insuficiente. Aguarde a regeneração.');return false;}
- const nearby=enemies.filter(e=>e.hp>0&&e.g.position.distanceTo(player.position)<=35).sort((a,b)=>a.g.position.distanceTo(player.position)-b.g.position.distanceTo(player.position));
+ function cast(id,preferredTarget=null){const spell=SPELLS[id];if(!spell)return false;if(cooldowns[id]>0){toast(`${spell.name}: ${Math.ceil(cooldowns[id])}s de recarga`);return false;}if(mana<spell.cost){toast('Mana insuficiente. Aguarde a regeneração.');return false;}
+ const nearby=enemies.filter(e=>e.hp>0&&e.g.position.distanceTo(player.position)<=35).sort((a,b)=>(a===preferredTarget?-1000:a.g.position.distanceTo(player.position))-(b===preferredTarget?-1000:b.g.position.distanceTo(player.position)));
  if(id!=='nova'&&!nearby.length){toast('Aproxime-se de um boneco de treino para lançar a magia.');return false;}
  mana-=spell.cost;cooldowns[id]=spell.cooldown;lastSpell=id;const base=player.position.clone().add(new THREE.Vector3(0,.18,0));
  if(id==='nova'){for(let i=0;i<3;i++)ring(base.clone().add(new THREE.Vector3(0,i*.3,0)),spell.color,1+i*.4);burst(base.clone().add(new THREE.Vector3(0,1,0)),spell.color,32);for(const enemy of nearby)if(enemy.g.position.distanceTo(player.position)<=12)onDamage(enemy,spell.damage);}
@@ -16,5 +16,6 @@ export function createSpellSystem({scene,player,enemies,onDamage,toast}){
  toast(`${spell.name} · −${spell.cost} mana`);return true;}
  function restore(){const base=player.position.clone().add(new THREE.Vector3(0,.1,0));ring(base,'#83ffba',.8,1);burst(base.clone().add(new THREE.Vector3(0,.5,0)),'#83ffba',16);}
  function update(dt,active=true){if(active){mana=Math.min(100,mana+dt*6);for(const key of Object.keys(cooldowns))cooldowns[key]=Math.max(0,cooldowns[key]-dt);}for(let i=effects.length-1;i>=0;i--){const e=effects[i];e.life-=dt;if(e.life<=0){scene.remove(e.object);e.object.geometry.dispose();e.object.material.dispose();effects.splice(i,1);continue;}e.object.material.opacity=e.life/e.max;if(e.velocity)e.object.position.addScaledVector(e.velocity,dt);if(e.grow)e.object.scale.addScalar(e.grow*dt);}}
- return {cast,restore,update,get state(){return {mana,cooldowns:{...cooldowns},lastSpell,effects:effects.length};}};
+ function restoreMana(amount){mana=Math.min(100,mana+amount);ring(player.position.clone().add(new THREE.Vector3(0,.15,0)),'#719fff',.8,1);}
+ return {cast,restore,restoreMana,update,get state(){return {mana,cooldowns:{...cooldowns},lastSpell,effects:effects.length};}};
 }

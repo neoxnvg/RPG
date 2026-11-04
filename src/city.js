@@ -7,7 +7,7 @@ export function createCity(scene) {
   const root=new THREE.Group();root.name='Cidade de Vespera';scene.add(root);
   const obstacles=[],animated=[],npcs=[],buildings=[];
   let seed=123;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
-  function texture(type){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle=type==='roof'?'#222b34':'#52575a';ctx.fillRect(0,0,512,512);const h=type==='ground'?32:type==='roof'?24:48,w=type==='ground'?55:88;for(let y=-h;y<512;y+=h)for(let x=-w;x<512;x+=w){const offset=(Math.floor(y/h)%2)*w/2,v=Math.floor(random()*28);ctx.fillStyle=type==='roof'?`rgb(${48+v/2},${58+v/2},${70+v/2})`:`rgb(${66+v},${70+v},${72+v})`;ctx.fillRect(x+offset+2,y+2,w-4,h-4);ctx.strokeStyle='#a9a89930';ctx.strokeRect(x+offset+3,y+3,w-7,h-7);for(let j=0;j<12;j++){ctx.fillStyle='#00000013';ctx.fillRect(x+offset+random()*w,y+random()*h,2+random()*4,1);}}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;return t;}
+  function texture(type){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle=type==='roof'?'#222b34':'#52575a';ctx.fillRect(0,0,512,512);const h=type==='ground'?32:type==='roof'?24:48,w=type==='ground'?55:88;for(let y=-h;y<512;y+=h)for(let x=-w;x<512;x+=w){const offset=(Math.floor(y/h)%2)*w/2,v=Math.floor(random()*16);ctx.fillStyle=type==='roof'?`rgb(${48+v/2},${58+v/2},${70+v/2})`:`rgb(${66+v},${70+v},${72+v})`;ctx.fillRect(x+offset+2,y+2,w-4,h-4);ctx.strokeStyle='#a9a89930';ctx.strokeRect(x+offset+3,y+3,w-7,h-7);for(let j=0;j<12;j++){ctx.fillStyle='#00000013';ctx.fillRect(x+offset+random()*w,y+random()*h,2+random()*4,1);}}const image=ctx.getImageData(0,0,512,512);for(let i=0;i<image.data.length;i+=4){const n=(random()-.5)*14;image.data[i]=Math.max(0,image.data[i]+n);image.data[i+1]=Math.max(0,image.data[i+1]+n);image.data[i+2]=Math.max(0,image.data[i+2]+n);}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;return t;}
   const stoneMap=texture('wall'),roofMap=texture('roof'),groundMap=texture('ground');groundMap.repeat.set(18,20);
   const material=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.85,...extra});
   const stone=material('#ddd6c9',{map:stoneMap,bumpMap:stoneMap,bumpScale:.12}),trim=material('#686b6c'),roof=material('#b0bccb',{map:roofMap,bumpMap:roofMap,bumpScale:.12,metalness:.2}),gold=material('#c4a565',{metalness:.7,roughness:.45}),wood=material('#4c3026'),red=material('#632c32'),green=material('#354c38'),glow=material('#ffd392',{emissive:'#ff9d35',emissiveIntensity:1.5}),purple=material('#ad8bd4',{emissive:'#8652db',emissiveIntensity:1.1});
@@ -17,7 +17,7 @@ export function createCity(scene) {
   function cylinder(r,h,m,x,y,z,p=root,r2=r){return put(new THREE.CylinderGeometry(r,r2,h,10),m,x,y,z,p);}
   function cone(r,h,m,x,y,z,p=root){return put(new THREE.ConeGeometry(r,h,4),m,x,y,z,p);}
   const ground=put(new THREE.PlaneGeometry(210,210),material('#445044'),0,-.15,0);ground.rotation.x=-Math.PI/2;
-  const pavement=put(new THREE.PlaneGeometry(86,90),material('#c5c5c0',{map:groundMap,bumpMap:groundMap,bumpScale:.08}),0,.005,0);pavement.rotation.x=-Math.PI/2;
+  const pavement=put(new THREE.PlaneGeometry(86,90),material('#aaa79f',{map:groundMap,bumpMap:groundMap,bumpScale:.08}),0,.005,0);pavement.rotation.x=-Math.PI/2;
   // Gold-edged processional streets and garden plots establish the reference layout.
   for(const x of [-10,10])box(.12,.035,87,gold,x,.04,0);
   for(const z of [-13,13])box(82,.035,.12,gold,0,.04,z);
@@ -70,7 +70,7 @@ export function createCity(scene) {
   // Central compass mosaic with inlaid spokes and emissive sigil.
   const plaza=cylinder(7.5,.04,trim,0,.035,0);
   for(const r of [2.5,5.6,7]){const ring=put(new THREE.TorusGeometry(r,.055,5,80),gold,0,.07,0);ring.rotation.x=Math.PI/2;}
-  for(let i=0;i<16;i++){const a=i*Math.PI/8;const spoke=box(.065,.03,13,gold,0,.08,0);spoke.rotation.y=a;}
+  const compass=new THREE.Shape(),compassPoints=[];for(let i=0;i<16;i++){const a=i*Math.PI/8,r=i%2?3.8:6.7,x=Math.sin(a)*r,z=Math.cos(a)*r;if(i===0)compass.moveTo(x,z);else compass.lineTo(x,z);compassPoints.push(new THREE.Vector3(x,.085,-z));}compass.closePath();const inlay=put(new THREE.ShapeGeometry(compass),material('#344851',{metalness:.4}),0,.08,0);inlay.rotation.x=-Math.PI/2;compassPoints.push(compassPoints[0]);root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(compassPoints),new THREE.LineBasicMaterial({color:'#aa9562'})));
   const rune=put(new THREE.OctahedronGeometry(.35),material('#a0e9f2',{emissive:'#5bb5d6',emissiveIntensity:1.5}),0,.35,0);animated.push({type:'rune',object:rune});
   for(const [x,z] of [[-10,-13],[10,-13],[-10,13],[10,13],[-6,40],[6,40]])brazier(x,z);
   // Portal in the south avenue.

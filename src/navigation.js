@@ -17,5 +17,6 @@ export function createNavigation(obstacles, bounds={minX:-41,maxX:41,minZ:-43,ma
       }
     }return null;
   }
-  return {blocked,clear,path};
+  function approach(start,target,radius=2.2){const base=Math.atan2(start.z-target.z,start.x-target.x);for(const offset of [0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6,7,-7,8]){const a=base+offset*Math.PI/8,point={x:target.x+Math.cos(a)*radius,z:target.z+Math.sin(a)*radius};if(path(start,point))return point;}return null;}
+  return {blocked,clear,path,approach};
 }
