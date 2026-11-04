@@ -76,8 +76,8 @@ export function createCity(scene) {
   // Portal in the south avenue.
   const portal=new THREE.Group();portal.position.set(0,0,23);root.add(portal);for(const x of [-2.3,2.3]){box(.6,4.7,.7,trim,x,2.35,0,portal);spire(x,0,5.5,portal);}for(let i=0;i<14;i++){const a=i/13*Math.PI;const segment=box(.65,.6,.7,gold,Math.cos(a)*2.3,3.8+Math.sin(a)*2,0,portal);segment.rotation.z=a-Math.PI/2;}
   const portalMat=material('#79d8ef',{emissive:'#2396c5',emissiveIntensity:1.8,transparent:true,opacity:.45,side:THREE.DoubleSide});const gate=put(archGeo(3.7,5.4,.02),portalMat,0,.1,0,portal);for(const r of [.6,1,1.5]){const ring=put(new THREE.TorusGeometry(r,.04,5,48),portalMat,0,2.5,.1,portal);animated.push({type:'portal',object:ring});}
-  // Training court is the only combat area inside the city.
-  for(const x of [17,35])box(.2,.6,9,wood,x,.3,35);for(const z of [30.5,39.5])box(18,.6,.2,wood,26,.3,z);
+  // The former training court is now a peaceful civic garden.
+  garden(26,35,17,8);tree(18,35,5);tree(34,35,5);
   const npcData=[['Capitã Lyra','Guarda da cidade',-6,8,'#66778d'],['Mira','Mercadora',20,2,'#a16d52'],['Brann','Ferreiro',20,28,'#81564a'],['Irmã Elara','Curandeira',-7,-20,'#d3d4c1'],['Mestre Oren','Instrutor',17,34,'#7e806b']];
   function humanoid(x,z,color){const g=new THREE.Group();g.position.set(x,0,z);root.add(g);const cloth=material(color);put(new THREE.CylinderGeometry(.3,.5,1.05,8),cloth,0,.9,0,g);put(new THREE.SphereGeometry(.23,10,8),material('#c29c82'),0,1.68,0,g);put(new THREE.SphereGeometry(.25,10,8,0,Math.PI*2,0,Math.PI/2),wood,0,1.77,0,g);for(const a of [-1,1]){box(.18,.55,.22,wood,a*.2,.28,0,g);box(.16,.72,.17,cloth,a*.4,1.05,0,g);}return g;}
   for(const [name,role,x,z,color] of npcData){let g;if(name==='Capitã Lyra'||name==='Mestre Oren'){const guard=createHero(name==='Capitã Lyra'?'seraph':'phoenix',{wings:false});g=guard.root;g.scale.setScalar(.6);g.position.set(x,0,z);root.add(g);}else g=humanoid(x,z,color);const marker=put(new THREE.OctahedronGeometry(.16),gold,0,2.3,0,g);npcs.push({name,role,g,marker});}
@@ -94,5 +94,5 @@ export function createCity(scene) {
   obstacles.push({x:0,z:0,w:5.6,d:5.6});
   const navigation=createNavigation(obstacles);
   function update(time){for(const a of animated){if(a.type==='fire'){a.object.scale.y=1.5+Math.sin(time*7+a.object.position.x)*.25;}else if(a.type==='portal')a.object.rotation.z=time*.3;else a.object.rotation.y=time;}for(const npc of npcs)npc.marker.position.y=2.3+Math.sin(time*2)*.12;}
-  return {ground:pavement,plaza,portal,portalMat,gate,npcs,buildings,navigation,update,spawn:new THREE.Vector3(0,0,9),portalPosition:new THREE.Vector3(0,0,23)};
+  return {root,ground:pavement,plaza,portal,portalMat,gate,npcs,buildings,navigation,update,spawn:new THREE.Vector3(0,0,9),portalPosition:new THREE.Vector3(0,0,23)};
 }

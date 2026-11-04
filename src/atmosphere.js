@@ -18,5 +18,5 @@ export function createAtmosphere(scene){
  for(const {person,legs,lane,phase} of citizens){const t=time*.12+phase;person.position.set(lane,0,Math.sin(t)*18);person.rotation.y=Math.cos(t)>0?0:Math.PI;legs.forEach((leg,i)=>leg.rotation.x=Math.sin(time*6+phase+i*Math.PI)*.4);}
  vortex.rotation.z=time*.35;
  }
- return {update,citizenCount:citizens.length};
+ return {root,update,citizenCount:citizens.length};
 }

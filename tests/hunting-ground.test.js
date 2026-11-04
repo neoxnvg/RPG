@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import {createHuntingGround} from '../src/hunting-ground.js';
+test('large hunting map has 72 separated, walkable spawns divided into six layers',()=>{const previous=globalThis.document;globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>({fillRect(){}})})};try{const field=createHuntingGround(new THREE.Scene());assert.equal(field.spawns.length,72);for(let layer=0;layer<6;layer++)assert.equal(field.spawns.filter(s=>s.layer===layer).length,12);for(const spawn of field.spawns)assert.equal(field.navigation.blocked(spawn.x,spawn.z),false);for(let i=0;i<field.spawns.length;i++)for(let j=0;j<i;j++)assert.ok(Math.hypot(field.spawns[i].x-field.spawns[j].x,field.spawns[i].z-field.spawns[j].z)>=2);assert.equal(field.navigation.blocked(62,0),true);assert.equal(field.navigation.blocked(0,128),true);assert.equal(field.navigation.blocked(field.spawn.x,field.spawn.z),false);}finally{if(previous===undefined)delete globalThis.document;else globalThis.document=previous;}});

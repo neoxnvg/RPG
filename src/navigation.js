@@ -8,7 +8,7 @@ export function createNavigation(obstacles, bounds={minX:-41,maxX:41,minZ:-43,ma
     if(clear(start,end))return [{x:end.x,z:end.z}];
     const cell=p=>[Math.round(p.x/step),Math.round(p.z/step)],key=(x,z)=>`${x},${z}`;
     const [sx,sz]=cell(start),[ex,ez]=cell(end),open=[{x:sx,z:sz,g:0,f:0}],best=new Map([[key(sx,sz),0]]),parents=new Map();
-    for(let tries=0;open.length&&tries<5000;tries++){
+    for(let tries=0;open.length&&tries<20000;tries++){
       open.sort((a,b)=>b.f-a.f);const n=open.pop(),k=key(n.x,n.z);if(n.g>best.get(k))continue;
       if(n.x===ex&&n.z===ez){const result=[{x:end.x,z:end.z}];let current=k;while(parents.has(current)){const [x,z]=current.split(',').map(Number);result.unshift({x:x*step,z:z*step});current=parents.get(current);}if(!result.every((p,i)=>clear(i?result[i-1]:start,p)))return null;return result;}
       for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){

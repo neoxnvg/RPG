@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {MAPS,mapAccess,xpForLevel,levelFromXP,migrateExperience,FIRST_LAYERS,layerAt} from '../src/maps.js';
+test('atlas has a city and fifty uniquely indexed maps covering every level through 1000',()=>{assert.equal(MAPS.length,51);assert.equal(new Set(MAPS.map(m=>m.id)).size,51);assert.equal(new Set(MAPS.map(m=>m.name)).size,51);let next=1;for(const m of MAPS.slice(1)){assert.equal(m.minLevel,next);assert.ok(m.maxLevel>=m.minLevel);next=m.maxLevel+1;}assert.equal(next,1001);});
+test('second map rejects level 29 and allows level 30; future maps stay unavailable',()=>{assert.equal(mapAccess(MAPS[2],29).allowed,false);assert.equal(mapAccess(MAPS[2],30).allowed,true);assert.equal(mapAccess(MAPS[3],1000).allowed,false);assert.equal(mapAccess(MAPS[0],1).allowed,true);});
+test('XP boundaries and legacy migration preserve player levels',()=>{for(const level of [1,2,10,29,30,31,999,1000]){assert.equal(levelFromXP(xpForLevel(level)),level);if(level>1)assert.equal(levelFromXP(xpForLevel(level)-1),level-1);}assert.equal(levelFromXP(migrateExperience({experience:2900})),30);assert.equal(migrateExperience({experience:175,progressionVersion:2}),175);});
+test('first map has six increasing mob layers on the same terrain',()=>{assert.equal(FIRST_LAYERS.length,6);for(let i=0;i<6;i++){assert.equal(layerAt(100-i*40),i);if(i)assert.ok(FIRST_LAYERS[i].min>FIRST_LAYERS[i-1].max);}assert.equal(layerAt(10000),0);assert.equal(layerAt(-10000),5);});
