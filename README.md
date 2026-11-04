@@ -6,7 +6,7 @@ RPG de fantasia em 3D para navegador, com Three.js e Vite. Primeira versão jog�
 
 Node.js 22.12+ (validado com 24). `npm ci` e `npm run dev`. `npm run build` gera `dist/`; `npm run preview` serve a compilação.
 
-Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alternativo; Shift: correr; arrastar cenário: girar câmera horizontal/vertical; rolar roda: zoom; arrastar com botão do meio: deslocar câmera; R: recentralizar; botão direito no inimigo: ataque direcionado de energia (alcance de 35 unidades), com impacto e número de dano; Espaço: ataque; Q: cura (15s de recarga); E: interação; Esc: pausa. Em dispositivos móveis, toque no cenário para caminhar; use os botões de ação. Fale com o Oráculo, reúna cinco cristais e interaja com o portal. Cristais e conclusão são salvos em localStorage. Limpe `aether-save` para recomeçar.
+Clique/toque no chão: caminhar até o ponto marcado; WASD/setas: movimento alternativo; Shift: correr; câmera isométrica estável durante o jogo; C: girar em passos de 45 graus; roda: zoom limitado; R: restaurar visão clássica; arrastar gira apenas a inspeção do herói; botão direito no inimigo: ataque direcionado de energia (alcance de 35 unidades), com impacto e número de dano; Espaço: ataque; Q: cura (15s de recarga); E: interação; Esc: pausa. Em dispositivos móveis, toque no cenário para caminhar; use os botões de ação. Fale com o Oráculo, reúna cinco cristais e interaja com o portal. Cristais e conclusão são salvos em localStorage. Limpe `aether-save` para recomeçar.
 
 ## Personagens e magias
 
@@ -28,6 +28,13 @@ Cidade 3D procedural inspirada na referência fornecida: muralhas, portão, cate
 
 Os primeiros NPCs são Capitã Lyra (missão inicial), Mira (mercadora/provisões de teste), Brann (ferreiro/diálogo), Irmã Elara (cura) e Mestre Oren (instruções de combate). Clique no nome do NPC para se aproximar e conversar; E interage com o NPC mais próximo. O comércio e a fabricação ainda não possuem sistemas de inventário ou economia. O Oráculo permanece próximo à catedral.
 
-A cidade é uma zona segura. Bonecos no pátio de treino recebem ataques do botão direito e se restauram após cinco segundos. Clique para caminhar; a navegação contorna os prédios. `M` ou o botão CIDADE mostra a vista geral; `R` retorna a câmera ao personagem. A rotação e o zoom continuam disponíveis.
+A cidade é segura fora da arena (pátio a sudeste). Dentro dela, simulacros perseguem e atacam o jogador. Segure o botão direito no adversário para repetir ataques; há seleção visível e barra de vida. Uma vitória concede 25 EXP e 10 Zen, salvos localmente. Cada 100 EXP aumenta o nível e restaura a vida. Os adversários reaparecem após oito segundos. Ao chegar a zero de vida, o jogador é resgatado para a praça, mantendo o progresso. Clique para caminhar; a navegação contorna os prédios. `M` ou o botão CIDADE mostra a vista geral; `R` retorna a câmera ao personagem. A rotação e o zoom continuam disponíveis.
 
 `npm test` verifica a navegação, incluindo contorno de obstáculos e rejeição de interiores. A compilação e os testes de navegador também foram executados durante a implementação. As atualizações seguem o fluxo GitHub → branch web → cron do servidor. O usuário de acesso é `rpg`, na porta `22122`.
+
+
+## Revisão da experiência de jogo
+
+A câmera de jogo é ortográfica/isométrica, com escala constante, sem órbita acidental no clique e sem atraso no acompanhamento. A inspeção H mantém uma câmera separada em perspectiva. O nascimento acontece na praça central. As armaduras receberam proporções mais alongadas e iluminação de ambiente para leitura dos materiais; as partes articuladas foram agrupadas por material para reduzir chamadas de desenho.
+
+Vespera agora tem fonte com gotas animadas, tochas com luz variável, portal com vórtice e seis moradores circulando. A HUD mostra orbes de vida/mana, alvo selecionado, recargas, EXP e Zen. Essas são implementações autorais em Three.js; não há assets, servidor multiplayer ou conteúdo comercial de MU Online neste repositório.
